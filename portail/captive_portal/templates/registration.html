@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Saisie des Informations - Portail Captif</title>
+
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS EMBARQUÉ (UI/UX ENTERPRISE MODERN) -->
+    <style>
+        :root {
+            /* Palette Corporate Modern */
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-border: #e2e8f0;
+            --color-border-hover: #cbd5e1;
+
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
+            --color-text-light: #94a3b8;
+
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #eff6ff;
+            --color-primary-border: #bfdbfe;
+
+            --color-error: #ef4444;
+            --color-error-bg: #fef2f2;
+            --color-error-border: #fca5a5;
+
+            --color-success: #10b981;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            --shadow-button: 0 4px 14px rgba(37, 99, 235, 0.25);
+            --shadow-button-hover: 0 6px 20px rgba(37, 99, 235, 0.35);
+
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* RESET CORRIGÉ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 24px 16px 48px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* BARRE SUPÉRIEURE : NAVIGATION RETOUR */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .btn-back:hover {
+            color: var(--color-primary);
+            border-color: var(--color-primary-border);
+            background-color: var(--color-primary-light);
+            transform: translateX(-2px);
+        }
+
+        .btn-back svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* CARTE PRINCIPALE DE FORMULAIRE */
+        .form-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* HEADER DE LA CARTE */
+        .header-section {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-text-main);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        /* RÉCAPITULATIF DU FORFAIT SÉLECTIONNÉ (OPTIMISÉ MOBILE) */
+        .recap-box {
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .recap-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .recap-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-light);
+        }
+
+        .recap-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-text-main);
+        }
+
+        .recap-tags {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+
+        .recap-tag-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .recap-tag-item svg {
+            width: 13px;
+            height: 13px;
+            stroke: var(--color-primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .recap-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-primary);
+            white-space: nowrap;
+            letter-spacing: -0.5px;
+            background-color: var(--color-primary-light);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-primary-border);
+        }
+
+        /* FORMULAIRE ET CHAMPS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-main);
+            margin-bottom: 8px;
+        }
+
+        .form-label span.required {
+            color: var(--color-error);
+            margin-left: 2px;
+        }
+
+        /* Style universel pour inputs et selects rendus par Django */
+        .form-group input,
+        .form-group select,
+        .form-input,
+        .form-select {
+            width: 100%;
+            height: 46px;
+            background-color: #ffffff;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 0 14px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--color-text-main);
+            outline: none;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: var(--color-text-light);
+        }
+
+        /* GESTION DES ERREURS DJANGO */
+        .form-group.has-error input,
+        .form-group.has-error select {
+            border-color: var(--color-error);
+            background-color: var(--color-error-bg);
+        }
+
+        .field-error {
+            color: var(--color-error);
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* BOUTON SOUMISSION */
+        .btn-submit {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 48px;
+            background-color: var(--color-primary);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: var(--shadow-button);
+            transition: var(--transition-smooth);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--color-primary-hover);
+            box-shadow: var(--shadow-button-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-submit svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-submit:hover svg {
+            transform: translateX(3px);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* FOOTER ET CONFIDENTIALITÉ */
+        .footer-navigation {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 20px;
+        }
+
+        .security-note svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--color-success);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* RESPONSIVE DESIGN (BREAKPOINTS) */
+        @media (min-width: 500px) {
+            .form-card {
+                padding: 40px 36px;
+            }
+            .card-title {
+                font-size: 26px;
+            }
+            .row-two-cols {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            .recap-price {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+
+        <!-- BARRE SUPÉRIEURE / RETOUR -->
+        <nav class="top-nav">
+            <a href="{% url 'liste_forfaits' %}{% if query_params %}?{{ query_params }}{% endif %}" class="btn-back">
+                <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Changer de forfait
+            </a>
+        </nav>
+
+        <!-- CARTE PRINCIPALE -->
+        <main class="form-card">
+
+            <header class="header-section">
+                <h1 class="card-title">Saisie des informations</h1>
+                <p class="card-subtitle">Veuillez renseigner vos coordonnées pour poursuivre l'accès au réseau</p>
+            </header>
+
+            <!-- RÉCAPITULATIF DU FORFAIT -->
+            {% if forfait %}
+                <div class="recap-box">
+                    <div class="recap-info">
+                        <span class="recap-label">Offre sélectionnée</span>
+                        <div class="recap-title">{{ forfait.titre }}</div>
+                        <div class="recap-tags">
+                            <span class="recap-tag-item">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                {{ forfait.duree_formatted }}
+                            </span>
+                            <span>•</span>
+                            <span class="recap-tag-item">
+                                <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                                {{ forfait.quota_formatted }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="recap-price">
+                        {{ forfait.prix|stringformat:"d" }} FCFA
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- FORMULAIRE DJANGO -->
+            <form method="POST" id="registrationForm" action="{% url 'recuperation_informations' forfait_id=forfait.id %}{% if query_params %}?{{ query_params }}{% endif %}">
+                {% csrf_token %}
+
+                <!-- RANGÉE DYNAMIQUE NOM & PRÉNOM (1 col sur Mobile, 2 col sur Écran large) -->
+                <div class="row-two-cols">
+                    <!-- CHAMP NOM -->
+                    <div class="form-group {% if form.nom.errors %}has-error{% endif %}">
+                        <label for="{{ form.nom.id_for_label }}" class="form-label">
+                            <span>Nom <span class="required">*</span></span>
+                        </label>
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="field-error">
+                                <span>{{ form.nom.errors.0 }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- CHAMP PRÉNOM -->
+                    <div class="form-group {% if form.prenom.errors %}has-error{% endif %}">
+                        <label for="{{ form.prenom.id_for_label }}" class="form-label">
+                            <span>Prénom <span class="required">*</span></span>
+                        </label>
+                        {{ form.prenom }}
+                        {% if form.prenom.errors %}
+                            <div class="field-error">
+                                <span>{{ form.prenom.errors.0 }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- CHAMP NUMÉRO DE TÉLÉPHONE -->
+                <div class="form-group {% if form.numero.errors %}has-error{% endif %}">
+                    <label for="{{ form.numero.id_for_label }}" class="form-label">
+                        <span>Numéro de Téléphone <span class="required">*</span></span>
+                    </label>
+                    {{ form.numero }}
+                    {% if form.numero.errors %}
+                        <div class="field-error">
+                            <span>{{ form.numero.errors.0 }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- CHAMP PÔLE / SERVICE -->
+                <div class="form-group {% if form.pole_service.errors %}has-error{% endif %}">
+                    <label for="{{ form.pole_service.id_for_label }}" class="form-label">
+                        <span>Pôle / Service</span>
+                    </label>
+                    {{ form.pole_service }}
+                    {% if form.pole_service.errors %}
+                        <div class="field-error">
+                            <span>{{ form.pole_service.errors.0 }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- CHAMP ENTREPRISE / FILIALE -->
+                <div class="form-group {% if form.enterprise.errors %}has-error{% endif %}">
+                    <label for="{{ form.enterprise.id_for_label }}" class="form-label">
+                        <span>Entreprise / Filiale</span>
+                    </label>
+                    {{ form.enterprise }}
+                    {% if form.enterprise.errors %}
+                        <div class="field-error">
+                            <span>{{ form.enterprise.errors.0 }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- BOUTON D'ACTION PRINCIPAL -->
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span class="btn-text">Continuer vers le Paiement</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <span class="loading-spinner"></span>
+                </button>
+            </form>
+
+            <div class="security-note">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Vos données sont traitées de manière strictly confidentielle</span>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- SCRIPT DE GESTION DU SUBMIT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registrationForm');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            if (form && btnSubmit) {
+                form.addEventListener('submit', () => {
+                    const btnText = btnSubmit.querySelector('.btn-text');
+                    const btnIcon = btnSubmit.querySelector('.btn-icon');
+                    const spinner = btnSubmit.querySelector('.loading-spinner');
+
+                    if (btnText) btnText.innerText = "Validation en cours...";
+                    if (btnIcon) btnIcon.style.display = "none";
+                    if (spinner) spinner.style.display = "inline-block";
+                    btnSubmit.style.pointerEvents = "none";
+                    btnSubmit.style.opacity = "0.9";
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

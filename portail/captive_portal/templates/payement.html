@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choix du Paiement - Portail Captif</title>
+
+    <!-- Google Fonts (Roboto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- CSS EMBARQUÉ (GOOGLE MATERIAL DESIGN 3 - LIGHT THEME) -->
+    <style>
+        :root {
+            --md-sys-color-background: #f8f9fa;
+            --md-sys-color-surface: #ffffff;
+            --md-sys-color-surface-variant: #f1f3f4;
+            --md-sys-color-border: #dadce0;
+            --md-sys-color-on-surface: #202124;
+            --md-sys-color-on-surface-variant: #5f6368;
+            --md-sys-color-primary: #1a73e8;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-hover: #1557b0;
+            --md-sys-color-primary-container: #e8f0fe;
+            --md-sys-color-error: #d93025;
+            --md-sys-color-error-bg: #fce8e6;
+            --md-sys-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            --md-sys-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-surface);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .google-card {
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-border);
+            border-radius: var(--md-sys-radius);
+            width: 100%;
+            max-width: 480px;
+            padding: 32px 24px;
+            box-shadow: var(--md-sys-shadow);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        /* GESTION DES MESSAGES D'ERREUR */
+        .alert-container {
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background-color: var(--md-sys-color-error-bg);
+            border: 1px solid var(--md-sys-color-error);
+            color: var(--md-sys-color-error);
+            padding: 12px 16px;
+            border-radius: var(--md-sys-radius);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* RÉCAPITULATIF DU CLIENT ET DU FORFAIT */
+        .summary-card {
+            background-color: var(--md-sys-color-surface-variant);
+            border: 1px solid var(--md-sys-color-border);
+            border-radius: var(--md-sys-radius);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 1px dashed var(--md-sys-color-border);
+        }
+
+        .summary-label {
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .summary-value {
+            color: var(--md-sys-color-on-surface);
+            font-weight: 500;
+        }
+
+        .summary-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+        }
+
+        /* GRILLE DE SÉLECTION D'OPÉRATEUR DYNAMIQUE */
+        .section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .operator-option {
+            position: relative;
+        }
+
+        .operator-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .operator-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 54px;
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-border);
+            border-radius: var(--md-sys-radius);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .operator-logo {
+            max-height: 24px;
+            max-width: 32px;
+            object-fit: contain;
+            border-radius: 2px;
+        }
+
+        .operator-option input[type="radio"]:checked + .operator-label {
+            border: 2px solid var(--md-sys-color-primary);
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+        }
+
+        /* FORMULAIRE FIELD */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 8px;
+        }
+
+        .form-label span.required {
+            color: var(--md-sys-color-error);
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-border);
+            border-radius: var(--md-sys-radius);
+            padding: 0 16px;
+            font-size: 15px;
+            color: var(--md-sys-color-on-surface);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
+        /* BOUTON SOUMISSION */
+        .md-button {
+            width: 100%;
+            height: 48px;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--md-sys-radius);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.2s ease;
+        }
+
+        .md-button:hover {
+            background-color: var(--md-sys-color-primary-hover);
+        }
+
+        /* PIED DE PAGE & SÉCURITÉ */
+        .footer-navigation {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .back-link {
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface-variant);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--md-sys-color-primary);
+        }
+
+        .security-footer {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .lock-icon {
+            width: 14px;
+            height: 14px;
+            fill: var(--md-sys-color-on-surface-variant);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="google-card">
+
+        <!-- EN-TÊTE -->
+        <div class="header-section">
+            <h1 class="card-title">Option de Paiement</h1>
+            <p class="card-subtitle">Choisissez votre opérateur Mobile Money</p>
+        </div>
+
+        <!-- AFFICHAGE DES ERREURS -->
+        {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert-error">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- RÉCAPITULATIF COMMANDE -->
+        <div class="summary-card">
+            {% if user_info %}
+                <div class="summary-row">
+                    <span class="summary-label">Client :</span>
+                    <span class="summary-value">{{ user_info.prenom }} {{ user_info.nom }}</span>
+                </div>
+            {% endif %}
+
+            {% if forfait %}
+                <div class="summary-row">
+                    <span class="summary-label">Forfait :</span>
+                    <span class="summary-value">{{ forfait.titre }} ({{ forfait.duree_formatted }})</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Montant à régler :</span>
+                    <span class="summary-price">{{ forfait.prix|stringformat:"d" }} FCFA</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- FORMULAIRE DE CHOIX DE L'OPÉRATEUR ET NUMÉRO -->
+<form method="POST" action="{% url 'paiement' souscription_id=souscription.id %}{% if query_params %}?{{ query_params }}{% endif %}">            {% csrf_token %}
+
+            <!-- SÉLECTION DE L'OPÉRATEUR (DYNAMIQUE DEPUIS BDD) -->
+            <div class="section-title">Sélectionnez l'opérateur :</div>
+
+            {% if operateurs %}
+                <div class="operator-grid">
+                    {% for op in operateurs %}
+                        <div class="operator-option">
+                            <input type="radio"
+                                   id="op_{{ op.id }}"
+                                   name="operator_id"
+                                   value="{{ op.id }}"
+                                   {% if forloop.first %}checked{% endif %}
+                                   required>
+                            <label for="op_{{ op.id }}" class="operator-label">
+                                {% if op.logo %}
+                                    <img src="{{ op.logo.url }}" alt="{{ op.nom }}" class="operator-logo">
+                                {% endif %}
+                                <span>{{ op.nom }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--md-sys-color-error); font-size: 13px; margin-bottom: 16px;">
+                    Aucun opérateur de paiement disponible pour le moment.
+                </p>
+            {% endif %}
+
+            <!-- NUMÉRO DE PAIEMENT -->
+            <div class="form-group">
+                <label for="numero_paiement" class="form-label">Numéro Mobile Money <span class="required">*</span></label>
+                <input type="tel"
+                       id="numero_paiement"
+                       name="numero_paiement"
+                       class="form-input"
+                       placeholder="Ex: 0700000000"
+                       value="{{ user_info.numero|default:'' }}"
+                       required>
+            </div>
+
+            <!-- BOUTON VALIDER -->
+            <button type="submit" class="md-button">
+                Continuer vers le Récapitulatif
+            </button>
+
+        </form>
+
+        <!-- RETOUR & INFOS SÉCURITÉ -->
+        <div class="footer-navigation">
+            <a href="{% url 'recuperation_informations' forfait_id=forfait.id %}{% if query_params %}?{{ query_params }}{% endif %}" class="back-link">
+                ← Modifier mes informations
+            </a>
+
+            <div class="security-footer">
+                <svg class="lock-icon" viewBox="0 0 24 24">
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+                Paiement sécurisé Mobile Money
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

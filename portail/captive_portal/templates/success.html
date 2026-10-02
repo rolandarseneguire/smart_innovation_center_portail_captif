@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Accès Activé - Portail Captif</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-surface-variant: #f1f5f9;
+            --color-border: #e2e8f0;
+            --color-text-main: #0f172a;
+            --color-text-muted: #64748b;
+
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #eff6ff;
+
+            --color-success: #10b981;
+            --color-success-bg: #ecfdf5;
+            --color-success-border: #a7f3d0;
+
+            --color-warning-bg: #fffbebf8;
+            --color-warning-border: #fef08a;
+            --color-warning-text: #b45309;
+
+            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            --shadow-button: 0 4px 14px rgba(37, 99, 235, 0.25);
+
+            --radius-md: 10px;
+            --radius-lg: 16px;
+
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 32px 16px 48px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* CARTE PRINCIPALE DE SUCCÈS */
+        .google-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            padding: 36px 28px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+        }
+
+        /* BADGE STATUT */
+        .header-section {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--color-success-bg);
+            color: var(--color-success);
+            border: 1px solid var(--color-success-border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--color-text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--color-text-muted);
+        }
+
+        /* MÉTROLOGIE & METRIQUES */
+        .metrics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background-color: var(--color-surface-variant);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        /* GRID D'INFORMATIONS SYSTEME */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .info-box {
+            background-color: var(--color-surface-variant);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+        }
+
+        .info-box-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-muted);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .info-box-value {
+            font-size: 13px;
+            color: var(--color-text-main);
+            font-weight: 600;
+            font-mono: monospace;
+            word-break: break-all;
+        }
+
+        /* BOUTON NAVIGATION */
+        .md-button {
+            width: 100%;
+            height: 50px;
+            background-color: var(--color-primary);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--shadow-button);
+            transition: var(--transition-smooth);
+        }
+
+        .md-button:hover {
+            background-color: var(--color-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .md-button svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        /* ================================================================== */
+        /* BLOC CONSIGNES & AVERTISSEMENTS (EN DEHORS DE LA CARTE PRINCIPALE) */
+        /* ================================================================== */
+        .external-notice-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .notice-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .notice-card.warning {
+            background-color: var(--color-warning-bg);
+            border-color: var(--color-warning-border);
+            color: var(--color-warning-text);
+        }
+
+        .notice-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .notice-text {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .notice-text strong {
+            font-weight: 700;
+        }
+
+        .btn-save-receipt {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-main);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-save-receipt:hover {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary-hover);
+            color: var(--color-primary);
+        }
+
+        .btn-save-receipt svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* MASQUER POUR L'IMPRESSION */
+        @media print {
+            .external-notice-container, .md-button {
+                display: none !important;
+            }
+            body {
+                background: white;
+                padding: 0;
+            }
+            .google-card {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+
+        <!-- CARTE PRINCIPALE -->
+        <main class="google-card">
+
+            <header class="header-section">
+                <div class="status-badge">
+                    <span class="status-dot"></span> ACCÈS INTERNET ACTIF
+                </div>
+                <h1 class="card-title">Bienvenue, {{ user.prenom }}</h1>
+                <p class="card-subtitle">Votre session est ouverte avec succès</p>
+            </header>
+
+            <!-- MÉTROLOGIE -->
+            <div class="metrics-container">
+                <div class="metric-card">
+                    <span class="metric-label">Volume de données consommé</span>
+                    <span class="metric-value">{{ total_consomme }} Octets</span>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-label">Quota Restant</span>
+                    <span class="metric-value">{{ quota_restant }}</span>
+                </div>
+
+                <div class="metric-card">
+                    <span class="metric-label">Expiration du forfait</span>
+                    <span class="metric-value">{{ souscription.date_expiration|date:"d/m/Y à H:i" }}</span>
+                </div>
+            </div>
+
+            <!-- INFOS MACHINE -->
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-box-label">Adresse MAC</div>
+                    <div class="info-box-value">{{ user.mac_adresse }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-box-label">Adresse IP</div>
+                    <div class="info-box-value">{{ user.ip_adresse }}</div>
+                </div>
+            </div>
+
+            <!-- REDIRECTION INTERNET LIBRE -->
+            <a href="{{ redirurl|default:'https://www.google.com' }}" class="md-button">
+                <span>Naviguer sur le Web</span>
+                <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+
+        </main>
+
+        <!-- ================================================================== -->
+        /* INFORMATIONS ET RECOMMANDATIONS (EN DEHORS DE LA CARTE PRINCIPALE) */
+        <!-- ================================================================== -->
+        <div class="external-notice-container">
+
+            <!-- AVERTISSEMENT FERMETURE NAVIGATEUR -->
+            <div class="notice-card warning">
+                <svg class="notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <div class="notice-text">
+                    <strong>Recommandation importante :</strong> Ne fermez pas cette page ou cet onglet si vous souhaitez conserver l'accès direct au suivi de votre consommation en temps réel.
+                </div>
+            </div>
+
+            <!-- OPTION DE SAUVEGARDE / CAPTURE -->
+            <button type="button" class="btn-save-receipt" onclick="window.print()">
+                <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>Enregistrer / Capturer ce reçu d'accès</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

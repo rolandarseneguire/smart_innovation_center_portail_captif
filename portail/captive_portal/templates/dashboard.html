@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervision Réseau - {{ enterprise.nom|default:"Portail Captif" }}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --bg-body: #f8fafc;
+            --card-border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Barre latérale blanche */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--card-border);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        /* Navigation Sidebar */
+        .nav-link-custom {
+            color: #475569;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link-custom:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .nav-link-custom.active {
+            background-color: #0d6efd;
+            color: #ffffff !important;
+        }
+
+        /* Cartes d'indicateurs (KPIs) */
+        .card-stat {
+            background-color: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        /* Styles de la Table de Supervision */
+        .card-table {
+            background-color: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-custom {
+            vertical-align: middle;
+        }
+
+        .table-custom thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            padding: 14px 16px;
+        }
+
+        .table-custom tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges de Statut */
+        .badge-live {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            font-weight: 600;
+        }
+
+        .badge-expired {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            font-weight: 600;
+        }
+
+        /* Responsive Sidebar */
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--card-border);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar / Barre Latérale Admin -->
+    <aside class="sidebar p-3 d-flex flex-column justify-content-between">
+        <div>
+            <!-- Branding / Logo -->
+            <div class="d-flex align-items-center mb-4 px-2 pt-2">
+                {% if enterprise and enterprise.logo %}
+                    <img src="{{ enterprise.logo.url }}" alt="{{ enterprise.nom }}" style="max-height: 40px;" class="me-2">
+                {% else %}
+                    <div class="bg-primary text-white p-2 rounded-3 me-2">
+                        <i class="fa-solid fa-server fs-5"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h2 class="h6 fw-bold mb-0 text-dark">{{ enterprise.nom|default:"Supervision Captive" }}</h2>
+                    <small class="text-muted" style="font-size: 0.75rem;">Network Monitor v1.0</small>
+                </div>
+            </div>
+
+            <hr class="my-3 text-muted opacity-25">
+
+            <!-- Liens de Navigation -->
+            <nav class="nav flex-column gap-1">
+                <a class="nav-link nav-link-custom active d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-chart-line me-3"></i> Superviseur
+                </a>
+                <a class="nav-link nav-link-custom d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-wifi me-3"></i> Sessions Actives
+                </a>
+                <a class="nav-link nav-link-custom d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-users me-3"></i> Utilisateurs
+                </a>
+                <a class="nav-link nav-link-custom d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-receipt me-3"></i> Historique Paiements
+                </a>
+                <a class="nav-link nav-link-custom d-flex align-items-center" href="#">
+                    <i class="fa-solid fa-shield-halved me-3"></i> Logs Traçabilité
+                </a>
+            </nav>
+        </div>
+
+        <!-- Pied de Sidebar -->
+        <div class="border-top pt-3 px-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block fw-semibold small text-dark">{{ request.user.get_full_name|default:request.user.username }}</span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.7rem;">
+                        <i class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></i> En ligne
+                    </span>
+                </div>
+                <a href="{% url 'admin:logout' %}" class="btn btn-sm btn-light text-secondary border" title="Déconnexion">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Zone de Contenu Principal -->
+    <main class="main-content">
+
+        <!-- En-tête Principal -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1">Tableau de Bord de Supervision</h1>
+                <p class="text-secondary small mb-0">Vue d'ensemble de l'état du réseau, des accès captifs et des transactions Mobile Money.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-white bg-white border shadow-sm text-secondary btn-sm px-3 py-2 fw-semibold" onclick="location.reload();">
+                    <i class="fa-solid fa-arrows-rotate me-1"></i> Actualiser
+                </button>
+            </div>
+        </div>
+
+        <!-- Grille des Cartes Statistiques (KPIs) -->
+        <div class="row g-3 mb-4">
+
+            <!-- Sessions Actives -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card-stat p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-secondary small fw-semibold d-block mb-1">Sessions Actives</span>
+                            <span class="fs-2 fw-bold text-dark">{{ total_sessions_actives|default:"0" }}</span>
+                        </div>
+                        <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                            <i class="fa-solid fa-wifi"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Utilisateurs -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card-stat p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-secondary small fw-semibold d-block mb-1">Utilisateurs Enregistrés</span>
+                            <span class="fs-2 fw-bold text-dark">{{ total_users|default:"0" }}</span>
+                        </div>
+                        <div class="stat-icon-wrapper bg-success-subtle text-success">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recettes Totales -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card-stat p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-secondary small fw-semibold d-block mb-1">Revenu Total</span>
+                            <span class="fs-2 fw-bold text-dark">{{ total_revenu|default:"0" }} <small class="fs-6 text-muted">FCFA</small></span>
+                        </div>
+                        <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appareils Uniques (MAC) -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card-stat p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-secondary small fw-semibold d-block mb-1">Adresses MAC Uniques</span>
+                            <span class="fs-2 fw-bold text-dark">{{ total_macs|default:"0" }}</span>
+                        </div>
+                        <div class="stat-icon-wrapper bg-info-subtle text-info">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Table de Supervision Réseau -->
+        <div class="card card-table p-0 mb-4">
+            <div class="p-4 border-bottom d-flex align-items-center justify-content-between">
+                <div>
+                    <h2 class="h5 fw-bold text-dark mb-1">
+                        <i class="fa-solid fa-network-wired text-primary me-2"></i>Activité Réseau en Temps Réel
+                    </h2>
+                    <p class="text-muted small mb-0">Traçabilité complète des adresses IP, adresses MAC et sessions de souscription.</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                    <i class="fa-solid fa-pulse fa-bolt me-1"></i> Live Session
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom mb-0">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Service / Pôle</th>
+                            <th>Adresse IP & MAC</th>
+                            <th>Forfait Subscrit</th>
+                            <th>Expiration</th>
+                            <th>Statut Session</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in souscriptions %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">{{ sub.user.prenom }} {{ sub.user.nom }}</div>
+                                <small class="text-muted"><i class="fa-solid fa-phone fs-7 me-1"></i>{{ sub.user.numero }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border fw-normal">
+                                    {{ sub.user.pole_service.service|default:sub.user.pole_service|default:"N/A" }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="font-monospace fw-semibold text-primary small">{{ sub.user.ip_adresse|default:"N/A" }}</div>
+                                <div class="font-monospace text-secondary" style="font-size: 0.8rem;">{{ sub.user.mac_adresse|default:"N/A" }}</div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">{{ sub.forfait.titre }}</span>
+                                <small class="d-block text-muted">{{ sub.montant_paye }} FCFA</small>
+                            </td>
+                            <td>
+                                <span class="small fw-semibold text-dark">
+                                    <i class="fa-regular fa-clock text-muted me-1"></i>{{ sub.date_expiration|date:"H:i (d/m/Y)" }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if sub.est_active %}
+                                    <span class="badge badge-live px-3 py-2 rounded-pill">
+                                        <i class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></i> Connecté
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-expired px-3 py-2 rounded-pill">
+                                        <i class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></i> Expiré
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-inbox fs-1 mb-3 text-secondary d-block"></i>
+                                <span class="fw-semibold">Aucune session enregistrée</span>
+                                <p class="small text-muted mb-0">Les données de connexion s'afficheront ici dès qu'un utilisateur souscrira à un forfait.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
